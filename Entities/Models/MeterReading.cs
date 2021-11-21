@@ -10,12 +10,11 @@ namespace Entities.Models
 {
     public class MeterReading
     {
-        [Key]
         public int Id { get; set; } 
 
         public DateTime MeterReadingDateTime { get; set; }
 
-        public int MeterReadingValue { get; set; }
+        public int MeterReadValue { get; set; }
 
         [ForeignKey(nameof(Account))]
         public int AccountId { get; set; }

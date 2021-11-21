@@ -12,6 +12,6 @@ namespace Entities.DTOs
 
         public DateTime MeterReadingDateTime { get; set; }
 
-        public int MeterReadingValue { get; set; }
+        public int MeterReadValue { get; set; }
     }
 }
