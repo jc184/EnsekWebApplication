@@ -53,11 +53,6 @@ namespace EnsekWebApplication
                     CsvReader csvReader = new CsvReader(reader, config);
                     var records = csvReader.GetRecords<Account>().ToArray();
 
-                    //foreach (Account record in records)
-                    //{
-                    //    //_dbContext.Entry(record).State = EntityState.Detached;
-                    //    _dbContext.Accounts.Add(record);
-                    //}
                     foreach (Account record in records)
                     {
                         var entity = _dbContext.Accounts.Find(record.AccountId); //To Avoid tracking error
