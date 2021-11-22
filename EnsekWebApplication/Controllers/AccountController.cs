@@ -6,6 +6,9 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Collections.Generic;
+using System.IO;
+using System.Linq;
+using System.Net.Http.Headers;
 using System.Threading.Tasks;
 
 namespace EnsekWebApplication.Controllers
@@ -18,11 +21,13 @@ namespace EnsekWebApplication.Controllers
 
         private readonly IRepositoryManager _repository;
         private readonly IMapper _mapper;
+        private readonly IDbInitializer _dbInitializer;
 
-        public AccountController(IRepositoryManager repository, IMapper mapper)
+        public AccountController(IRepositoryManager repository, IMapper mapper, IDbInitializer dbInitializer)
         {
             _repository = repository;
             _mapper = mapper;
+            _dbInitializer = dbInitializer; 
         }
 
         [HttpGet(Name = "GetAccounts")]
@@ -147,6 +152,43 @@ namespace EnsekWebApplication.Controllers
             {
                 return StatusCode(500, "Internal server error");
             }
+        }
+
+
+        [Route("meter-reading-uploads")]
+        [HttpPost, DisableRequestSizeLimit]
+        public async Task<IActionResult> UploadDocument([FromHeader] String documentType, [FromForm] IFormFile file)
+        {
+            try
+            {
+                var formCollection = await Request.ReadFormAsync();
+                file = formCollection.Files.First();
+                var folderName = Path.Combine("Resources", "Uploads");
+                var pathToSave = Path.Combine(Directory.GetCurrentDirectory(), folderName);
+
+                if (file.Length > 0)
+                {
+                    string fileName = ContentDispositionHeaderValue.Parse(file.ContentDisposition).FileName.Trim('"');
+                    var fullPath = Path.Combine(pathToSave, fileName);
+                    var dbPath = Path.Combine(folderName, fileName);
+
+                    using (var stream = new FileStream(fullPath, FileMode.Create))
+                    {
+                        file.CopyTo(stream);
+                    }
+                    _dbInitializer.AddMeterReadings();
+                    return Ok(new { dbPath });
+                }
+                else
+                {
+                    return BadRequest();
+                }
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, $"Internal server error: {ex}");
+            }
+            
         }
     }
 }

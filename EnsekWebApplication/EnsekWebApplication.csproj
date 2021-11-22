@@ -5,7 +5,7 @@
   </PropertyGroup>
 	<ItemGroup>
 		<EmbeddedResource Include="Test_Accounts.csv" />
-		<EmbeddedResource Include="Meter_Reading.csv" />
+		<EmbeddedResource Include="Resources\Uploads\Meter_Reading.csv" />
 	</ItemGroup>
   <ItemGroup>
     <None Remove="DbInitializer.cs~RF2920dd67.TMP" />

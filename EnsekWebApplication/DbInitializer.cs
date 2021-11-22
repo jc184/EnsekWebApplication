@@ -57,7 +57,13 @@ namespace EnsekWebApplication
                     }
                 }
             }
-            string resourceName2 = "EnsekWebApplication.Meter_Reading.csv";
+            _dbContext.SaveChanges();
+        }
+
+        public void AddMeterReadings()
+        {
+            Assembly assembly = Assembly.GetExecutingAssembly();
+            string resourceName2 = "EnsekWebApplication.Resources.Uploads.Meter_Reading.csv";
             using (Stream stream = assembly.GetManifestResourceStream(resourceName2))
             {
                 using (StreamReader reader = new StreamReader(stream, Encoding.UTF8))
