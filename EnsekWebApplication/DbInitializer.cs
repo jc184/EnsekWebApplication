@@ -1,7 +1,9 @@
 ﻿using CsvHelper;
 using CsvHelper.Configuration;
 using Entities;
+using Entities.DTOs;
 using Entities.Models;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using System.IO;
 using System.Linq;
@@ -51,16 +53,30 @@ namespace EnsekWebApplication
                     CsvReader csvReader = new CsvReader(reader, config);
                     var records = csvReader.GetRecords<Account>().ToArray();
 
+                    //foreach (Account record in records)
+                    //{
+                    //    //_dbContext.Entry(record).State = EntityState.Detached;
+                    //    _dbContext.Accounts.Add(record);
+                    //}
                     foreach (Account record in records)
                     {
-                        _dbContext.Accounts.Add(record);
+                        var entity = _dbContext.Accounts.Find(record.AccountId); //To Avoid tracking error
+
+                        if (entity != null)
+                        {
+                            _dbContext.Entry(entity).State = EntityState.Detached;
+                            _dbContext.Accounts.AddRange(record);
+                        }
+                        _dbContext.Accounts.AddRange(record);
                     }
+
+
                 }
             }
             _dbContext.SaveChanges();
         }
 
-        public void AddMeterReadings()
+        public async void AddMeterReadings()
         {
             Assembly assembly = Assembly.GetExecutingAssembly();
             string resourceName2 = "EnsekWebApplication.Resources.Uploads.Meter_Reading.csv";
@@ -80,7 +96,14 @@ namespace EnsekWebApplication
 
                     foreach (MeterReading record in records)
                     {
-                        _dbContext.MeterReadings.Add(record);
+                        var entity = _dbContext.MeterReadings.Find(record.MeterReadingDateTime); //To Avoid tracking error
+                        
+                        if(entity != null)
+                        {
+                            _dbContext.Entry(entity).State = EntityState.Detached;
+                            _dbContext.MeterReadings.AddRange(record);
+                        }
+                        _dbContext.MeterReadings.AddRange(record);
                     }
                 }
             }

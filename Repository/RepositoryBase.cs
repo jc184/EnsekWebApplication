@@ -33,6 +33,8 @@ namespace Repository
                 : EnsekDbContext.Set<T>()
                     .Where(expression);
 
+            
+
         public void Create(T entity)
         {
             this.EnsekDbContext.Set<T>().Add(entity);

@@ -16,9 +16,9 @@ namespace Repository
         {
         }
 
-        public void CreateMeterReading(int accountId, MeterReading meterReading)
+        public void CreateMeterReading(DateTime meterReadingDateTime, MeterReading meterReading)
         {
-            meterReading.AccountId = accountId;
+            meterReading.MeterReadingDateTime = meterReadingDateTime;
             Create(meterReading);
         }
 
@@ -33,9 +33,9 @@ namespace Repository
                 .ToListAsync();
 
 
-        public async Task<MeterReading> GetMeterReadingByIdAsync(int meterReadingId, bool
+        public async Task<MeterReading> GetMeterReadingByIdAsync(DateTime meterReadingDateTime, bool
             trackChanges) =>
-            await FindByCondition(meterReading => meterReading.Id.Equals(meterReadingId), trackChanges)
+            await FindByCondition(meterReading => meterReading.MeterReadingDateTime.Equals(meterReadingDateTime), trackChanges)
             .SingleOrDefaultAsync();
 
         public void UpdateMeterReading(MeterReading meterReading)

@@ -34,9 +34,9 @@ namespace EnsekWebApplication.Controllers
         }
 
         [HttpGet("{id}", Name = "MeterReadingById")]
-        public async Task<IActionResult> GetMeterReading(int id)
+        public async Task<IActionResult> GetMeterReading(DateTime meterReadingDateTime)
         {
-            var meterReading = await _repository.MeterReadings.GetMeterReadingByIdAsync(id, trackChanges: false);
+            var meterReading = await _repository.MeterReadings.GetMeterReadingByIdAsync(meterReadingDateTime, trackChanges: false);
 
             if (meterReading == null)
             {
@@ -51,9 +51,9 @@ namespace EnsekWebApplication.Controllers
 
 
         [HttpPost]
-        public async Task<IActionResult> CreateMeterReading(int meterReadingId, [FromBody] MeterReadingsForCreationDTO comment)
+        public async Task<IActionResult> CreateMeterReading(DateTime meterReadingDateTime, [FromBody] MeterReadingsForCreationDTO comment)
         {
-            var meterReading = await _repository.MeterReadings.GetMeterReadingByIdAsync(meterReadingId, trackChanges: false);
+            var meterReading = await _repository.MeterReadings.GetMeterReadingByIdAsync(meterReadingDateTime, trackChanges: false);
             if (meterReading == null)
             {
                 return NotFound();
@@ -61,20 +61,20 @@ namespace EnsekWebApplication.Controllers
 
             var meterReadingEntity = _mapper.Map<MeterReading>(meterReading);
 
-            _repository.MeterReadings.CreateMeterReading(meterReadingId, meterReadingEntity);
+            _repository.MeterReadings.CreateMeterReading(meterReadingDateTime, meterReadingEntity);
             await _repository.SaveAsync();
 
             var meterReadingToReturn = _mapper.Map<MeterReadingDTO>(meterReadingEntity);
 
-            return CreatedAtRoute("CommentById", new { meterReadingId, id = meterReadingToReturn.Id }, meterReadingToReturn);
+            return CreatedAtRoute("MeterReadingById", new { meterReadingDateTime, id = meterReadingToReturn.MeterReadingDateTime }, meterReadingToReturn);
         }
 
         [HttpDelete("{id}")]
-        public async Task<IActionResult> DeleteMeterReading(int id)
+        public async Task<IActionResult> DeleteMeterReading(DateTime meterReadingDateTime)
         {
             try
             {
-                var meterReading = await _repository.MeterReadings.GetMeterReadingByIdAsync(id, trackChanges: false);
+                var meterReading = await _repository.MeterReadings.GetMeterReadingByIdAsync(meterReadingDateTime, trackChanges: false);
                 if (meterReading == null)
                 {
                     return NotFound();
@@ -92,7 +92,7 @@ namespace EnsekWebApplication.Controllers
         }
 
         [HttpPut("{id}")]
-        public async Task<IActionResult> UpdateMeterReading(int id, [FromBody] MeterReadingsForUpdateDTO meterReading)
+        public async Task<IActionResult> UpdateMeterReading(DateTime meterReadingDateTime, [FromBody] MeterReadingsForUpdateDTO meterReading)
         {
             try
             {
@@ -106,7 +106,7 @@ namespace EnsekWebApplication.Controllers
                     return BadRequest("Invalid model object");
                 }
 
-                var meterReadingEntity = await _repository.MeterReadings.GetMeterReadingByIdAsync(id, trackChanges: false);
+                var meterReadingEntity = await _repository.MeterReadings.GetMeterReadingByIdAsync(meterReadingDateTime, trackChanges: false);
                 if (meterReadingEntity == null)
                 {
                     return NotFound();

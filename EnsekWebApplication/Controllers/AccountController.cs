@@ -13,7 +13,9 @@ using System.Threading.Tasks;
 
 namespace EnsekWebApplication.Controllers
 {
-
+    /// <summary>
+    /// Account Controller
+    /// </summary>
     [Route("api/account")]
     [ApiController]
     public class AccountController : ControllerBase
@@ -23,6 +25,9 @@ namespace EnsekWebApplication.Controllers
         private readonly IMapper _mapper;
         private readonly IDbInitializer _dbInitializer;
 
+        /// <summary>
+        /// Constructor for Account Controller
+        /// </summary>
         public AccountController(IRepositoryManager repository, IMapper mapper, IDbInitializer dbInitializer)
         {
             _repository = repository;
@@ -30,6 +35,10 @@ namespace EnsekWebApplication.Controllers
             _dbInitializer = dbInitializer; 
         }
 
+        /// <summary>
+        /// Retrieves all accounts
+        /// </summary>
+        /// <response code="200">Accounts retrieved</response>
         [HttpGet(Name = "GetAccounts")]
         public async Task<IActionResult> GetAccounts()
         {
@@ -40,6 +49,11 @@ namespace EnsekWebApplication.Controllers
             return Ok(accountsDto);
         }
 
+        /// <summary>
+        /// Retrieves a specific account by id
+        /// </summary>
+        /// <response code="200">Account retrieved</response>
+        /// <response code="404">Account not found</response>
         [HttpGet("{id}", Name = "AccountById")]
         public async Task<IActionResult> GetAccount(int id)
         {
@@ -56,7 +70,11 @@ namespace EnsekWebApplication.Controllers
             }
         }
 
-
+        /// <summary>
+        /// Creates a new account
+        /// </summary>
+        /// <response code="201">Account added</response>
+        /// <response code="400">Bad Request</response>
         [HttpPost(Name = "CreateAccount")]
         public async Task<IActionResult> CreateAccount([FromBody] AccountForCreationDTO account)
         {
@@ -67,10 +85,14 @@ namespace EnsekWebApplication.Controllers
 
             var accountToReturn = _mapper.Map<AccountDTO>(accountEntity);
 
-            return CreatedAtRoute("CoffeeById", new { id = accountToReturn.Id }, accountToReturn);
+            return CreatedAtRoute("CoffeeById", new { id = accountToReturn.AccountId }, accountToReturn);
         }
 
 
+        /// <summary>
+        /// Deletes an account
+        /// </summary>
+        /// <response code="204">Account deleted</response>
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteAccount(int id)
         {
@@ -82,10 +104,10 @@ namespace EnsekWebApplication.Controllers
                     return NotFound();
                 }
 
-                if (_repository.MeterReadings.GetMeterReadingByIdAsync(id, trackChanges: false).IsCompleted)
-                {
-                    return BadRequest("Cannot delete coffee. It has related comments. Delete those comments first");
-                }
+                //if (_repository.MeterReadings.GetMeterReadingByIdAsync(meterReadingDateTime, trackChanges: false).IsCompleted)
+                //{
+                //    return BadRequest("Cannot delete Account. It has related meterreadings. Delete those first");
+                //}
 
                 _repository.Account.DeleteAccount(account);
                 await _repository.SaveAsync();
@@ -98,6 +120,11 @@ namespace EnsekWebApplication.Controllers
             }
         }
 
+        /// <summary>
+        /// Updates an account
+        /// </summary>
+        /// <response code="200">Account updated</response>
+        /// <response code="400">Bad Request</response>
         [HttpPut("{id}")]
         public async Task<IActionResult> UpdateAccount(int id, [FromBody] AccountForUpdateDTO account)
         {
@@ -132,6 +159,10 @@ namespace EnsekWebApplication.Controllers
             }
         }
 
+        /// <summary>
+        /// Retrieves all accounts with details
+        /// </summary>
+        /// <response code="200">Accounts retrieved</response>
         [HttpGet("{id}/meterreadings")]
         public async Task<IActionResult> GetAccountsWithDetails(int id)
         {
@@ -154,7 +185,10 @@ namespace EnsekWebApplication.Controllers
             }
         }
 
-
+        /// <summary>
+        /// Uploads Meter Readings file and adds data to database
+        /// </summary>
+        /// <response code="200">File added</response>
         [Route("meter-reading-uploads")]
         [HttpPost, DisableRequestSizeLimit]
         public async Task<IActionResult> UploadDocument([FromHeader] String documentType, [FromForm] IFormFile file)

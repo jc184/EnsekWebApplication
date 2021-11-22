@@ -8,7 +8,7 @@ namespace Entities.DTOs
 {
     public class MeterReadingDTO
     {
-        public int Id { get; set; }
+        //public int Id { get; set; }
 
         public DateTime MeterReadingDateTime { get; set; }
 

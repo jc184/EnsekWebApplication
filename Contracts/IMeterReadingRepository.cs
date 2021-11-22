@@ -10,8 +10,8 @@ namespace Contracts
     public interface IMeterReadingRepository : IRepositoryBase<MeterReading>
     {
         Task<IEnumerable<MeterReading>> GetAllMeterReadingsAsync(bool trackChanges);
-        Task<MeterReading> GetMeterReadingByIdAsync(int meterReadingId, bool trackChanges);
-        void CreateMeterReading(int accountId, MeterReading meterReading);
+        Task<MeterReading> GetMeterReadingByIdAsync(DateTime meterReadingDateTime, bool trackChanges);
+        void CreateMeterReading(DateTime meterReadingDateTime, MeterReading meterReading);
         void UpdateMeterReading(MeterReading meterReading);
         void DeleteMeterReading(MeterReading meterReading);
     }

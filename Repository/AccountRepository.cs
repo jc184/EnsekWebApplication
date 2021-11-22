@@ -28,21 +28,22 @@ namespace Repository
 
         public async Task<IEnumerable<Account>> GetAllAccountsAsync(bool trackChanges) =>
                await FindAll(trackChanges)
-                .OrderBy(c => c.Id)
+                .OrderBy(c => c.AccountId)
                 .ToListAsync();
 
 
         public async Task<Account> GetAccountByIdAsync(int accountId, bool
             trackChanges) =>
-            await FindByCondition(account => account.Id.Equals(accountId), trackChanges)
+            await FindByCondition(account => account.AccountId.Equals(accountId), trackChanges)
             .SingleOrDefaultAsync();
 
 
         public async Task<Account> GetAccountWithDetailsAsync(int accountId, bool trackChanges) =>
 
-            await FindByCondition(account => account.Id.Equals(accountId), trackChanges)
+            await FindByCondition(account => account.AccountId.Equals(accountId), trackChanges)
                 .Include(meterReading => meterReading.MeterReadings)
                 .FirstOrDefaultAsync();
+
 
         public void UpdateAccount(Account account)
         {
