@@ -185,44 +185,5 @@ namespace EnsekWebApplication.Controllers
             }
         }
 
-        /// <summary>
-        /// Uploads Meter Readings file and adds data to database
-        /// </summary>
-        /// <response code="200">File added</response>
-        [Route("meter-reading-uploads")]
-        [HttpPost, DisableRequestSizeLimit]
-        public async Task<IActionResult> UploadDocument([FromHeader] String documentType, [FromForm] IFormFile file)
-        {
-            try
-            {
-                var formCollection = await Request.ReadFormAsync();
-                file = formCollection.Files.First();
-                var folderName = Path.Combine("Resources", "Uploads");
-                var pathToSave = Path.Combine(Directory.GetCurrentDirectory(), folderName);
-
-                if (file.Length > 0)
-                {
-                    string fileName = ContentDispositionHeaderValue.Parse(file.ContentDisposition).FileName.Trim('"');
-                    var fullPath = Path.Combine(pathToSave, fileName);
-                    var dbPath = Path.Combine(folderName, fileName);
-
-                    using (var stream = new FileStream(fullPath, FileMode.Create))
-                    {
-                        file.CopyTo(stream);
-                    }
-                    _dbInitializer.AddMeterReadings();
-                    return Ok(new { dbPath });
-                }
-                else
-                {
-                    return BadRequest();
-                }
-            }
-            catch (Exception ex)
-            {
-                return StatusCode(500, $"Internal server error: {ex}");
-            }
-            
-        }
     }
 }

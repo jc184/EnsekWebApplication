@@ -6,23 +6,79 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Collections.Generic;
+using System.IO;
+using System.Linq;
+using System.Net.Http.Headers;
 using System.Threading.Tasks;
 
 namespace EnsekWebApplication.Controllers
 {
+    /// <summary>
+    /// MeterReading Controller
+    /// </summary>
     [Route("api/[controller]")]
     [ApiController]
     public class MeterReadingsController : ControllerBase
     {
         private readonly IRepositoryManager _repository;
         private readonly IMapper _mapper;
+        private readonly IDbInitializer _dbInitializer;
 
-        public MeterReadingsController(IRepositoryManager repository, IMapper mapper)
+        /// <summary>
+        /// Constructor for MeterReading Controller
+        /// </summary>
+        public MeterReadingsController(IRepositoryManager repository, IMapper mapper, IDbInitializer dbInitializer)
         {
             _repository = repository;
             _mapper = mapper;
+            _dbInitializer = dbInitializer;
         }
 
+
+        /// <summary>
+        /// Uploads Meter Readings file and adds data to database
+        /// </summary>
+        /// <response code="200">File added</response>
+        [Route("meter-reading-uploads")]
+        [HttpPost, DisableRequestSizeLimit]
+        public async Task<IActionResult> UploadDocument([FromHeader] String documentType, [FromForm] IFormFile file)
+        {
+            try
+            {
+                var formCollection = await Request.ReadFormAsync();
+                file = formCollection.Files.First();
+                var folderName = Path.Combine("Resources", "Uploads");
+                var pathToSave = Path.Combine(Directory.GetCurrentDirectory(), folderName);
+
+                if (file.Length > 0)
+                {
+                    string fileName = ContentDispositionHeaderValue.Parse(file.ContentDisposition).FileName.Trim('"');
+                    var fullPath = Path.Combine(pathToSave, fileName);
+                    var dbPath = Path.Combine(folderName, fileName);
+
+                    using (var stream = new FileStream(fullPath, FileMode.Create))
+                    {
+                        file.CopyTo(stream);
+                    }
+                    _dbInitializer.AddMeterReadings();
+                    return Ok(new { dbPath });
+                }
+                else
+                {
+                    return BadRequest();
+                }
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, $"Internal server error: {ex}");
+            }
+
+        }
+
+        /// <summary>
+        /// Retrieves all MeterReading
+        /// </summary>
+        /// <response code="200">MeterReading retrieved</response>
         [HttpGet(Name = "GetMeterReading")]
         public async Task<IActionResult> GetMeterReading()
         {
@@ -33,6 +89,11 @@ namespace EnsekWebApplication.Controllers
             return Ok(meterReadingsDto);
         }
 
+        /// <summary>
+        /// Retrieves a specific MeterReading by MeterReadingDateTine
+        /// </summary>
+        /// <response code="200">MeterReading retrieved</response>
+        /// <response code="404">MeterReading not found</response>
         [HttpGet("{id}", Name = "MeterReadingById")]
         public async Task<IActionResult> GetMeterReading(DateTime meterReadingDateTime)
         {
@@ -49,7 +110,11 @@ namespace EnsekWebApplication.Controllers
             }
         }
 
-
+        /// <summary>
+        /// Creates a new MeterReading
+        /// </summary>
+        /// <response code="201">MeterReading added</response>
+        /// <response code="400">Bad Request</response>
         [HttpPost]
         public async Task<IActionResult> CreateMeterReading(DateTime meterReadingDateTime, [FromBody] MeterReadingsForCreationDTO comment)
         {
@@ -69,6 +134,10 @@ namespace EnsekWebApplication.Controllers
             return CreatedAtRoute("MeterReadingById", new { meterReadingDateTime, id = meterReadingToReturn.MeterReadingDateTime }, meterReadingToReturn);
         }
 
+        /// <summary>
+        /// Deletes a MeterReading
+        /// </summary>
+        /// <response code="204">MeterReading deleted</response>
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteMeterReading(DateTime meterReadingDateTime)
         {
@@ -91,6 +160,11 @@ namespace EnsekWebApplication.Controllers
             }
         }
 
+        /// <summary>
+        /// Updates a MeterReading
+        /// </summary>
+        /// <response code="200">MeterReading updated</response>
+        /// <response code="400">Bad Request</response>
         [HttpPut("{id}")]
         public async Task<IActionResult> UpdateMeterReading(DateTime meterReadingDateTime, [FromBody] MeterReadingsForUpdateDTO meterReading)
         {
@@ -98,7 +172,7 @@ namespace EnsekWebApplication.Controllers
             {
                 if (meterReading == null)
                 {
-                    return BadRequest("Comment object is null");
+                    return BadRequest("MeterReading object is null");
                 }
 
                 if (!ModelState.IsValid)
