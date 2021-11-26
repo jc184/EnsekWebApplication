@@ -85,7 +85,7 @@ namespace EnsekWebApplication.Controllers
 
             var accountToReturn = _mapper.Map<AccountDTO>(accountEntity);
 
-            return CreatedAtRoute("CoffeeById", new { id = accountToReturn.AccountId }, accountToReturn);
+            return CreatedAtRoute(new { id = accountToReturn.AccountId }, accountToReturn);
         }
 
 
