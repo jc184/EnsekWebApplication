@@ -6,6 +6,6 @@ namespace EnsekWebApplication
     {
         void Initialize();
         void SeedData();
-        string AddMeterReadings();
+        int AddMeterReadings();
     }
 }

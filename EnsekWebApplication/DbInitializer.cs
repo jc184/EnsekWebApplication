@@ -72,7 +72,7 @@ namespace EnsekWebApplication
             _dbContext.SaveChanges();
         }
 
-        public string AddMeterReadings()
+        public int AddMeterReadings()
         {
             Assembly assembly = Assembly.GetExecutingAssembly();
             string resourceName2 = "EnsekWebApplication.Resources.Uploads.Meter_Reading.csv";
@@ -106,12 +106,12 @@ namespace EnsekWebApplication
                         {
                             _dbContext.MeterReadings.Add(record);
                         }
-
                     }
                 }
             }
             _dbContext.SaveChanges();
-            return _dbContext.MeterReadings.Count().ToString();
+            return _dbContext.MeterReadings.Count();
+            
         }
     }
 }

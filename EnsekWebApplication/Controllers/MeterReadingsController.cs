@@ -60,8 +60,8 @@ namespace EnsekWebApplication.Controllers
                     {
                         file.CopyTo(stream);
                     }
-                    string count = _dbInitializer.AddMeterReadings();
-                    return Ok(new { Message = "No of successful meter readings:" + " " + count + ""});
+                    int count = _dbInitializer.AddMeterReadings();
+                    return Ok(new { Message = "No of successful meter readings:" + " " + count + ", No of unsuccessful meter readings:" + " " + (35 - count) + "", });
                 }
                 else
                 {
