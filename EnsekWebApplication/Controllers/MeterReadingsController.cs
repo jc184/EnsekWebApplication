@@ -60,8 +60,8 @@ namespace EnsekWebApplication.Controllers
                     {
                         file.CopyTo(stream);
                     }
-                    _dbInitializer.AddMeterReadings();
-                    return Ok(new { dbPath });
+                    string count = _dbInitializer.AddMeterReadings();
+                    return Ok(new { Message = "No of successful meter readings:" + " " + count + ""});
                 }
                 else
                 {
@@ -94,7 +94,7 @@ namespace EnsekWebApplication.Controllers
         /// </summary>
         /// <response code="200">MeterReading retrieved</response>
         /// <response code="404">MeterReading not found</response>
-        [HttpGet("{id}", Name = "MeterReadingById")]
+        [HttpGet("{meterReadingDateTime}",Name = "MeterReadingById")]
         public async Task<IActionResult> GetMeterReading(DateTime meterReadingDateTime)
         {
             var meterReading = await _repository.MeterReadings.GetMeterReadingByIdAsync(meterReadingDateTime, trackChanges: false);

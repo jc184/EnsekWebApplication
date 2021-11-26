@@ -9,7 +9,7 @@ namespace Entities.DTOs
     public class MeterReadingDTO
     {
         public DateTime MeterReadingDateTime { get; set; }
-        public int MeterReadValue { get; set; }
+        public string MeterReadValue { get; set; }
         public int AccountId { get; set; }
     }
 }

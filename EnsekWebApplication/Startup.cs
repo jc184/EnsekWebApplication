@@ -1,6 +1,7 @@
 using Contracts;
 using EnsekWebApplication.Filters;
 using Entities;
+using FluentValidation.AspNetCore;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http.Features;
@@ -49,6 +50,16 @@ namespace EnsekWebApplication
                 .AddNewtonsoftJson(options =>
                      options.SerializerSettings.ReferenceLoopHandling = Newtonsoft.Json.ReferenceLoopHandling.Ignore
                 );
+            services
+                .AddMvcCore()
+                .AddApiExplorer()
+                .AddFluentValidation(s =>
+                {
+                    s.RegisterValidatorsFromAssemblyContaining<Startup>();
+                    s.DisableDataAnnotationsValidation = true;
+                    s.AutomaticValidationEnabled = true;
+                    s.ImplicitlyValidateChildProperties = true;
+                });
             services.AddSwaggerGen(c =>
             {
                 c.SwaggerDoc("v1", new OpenApiInfo

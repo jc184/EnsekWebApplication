@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Entities.CustomAttributes;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
@@ -10,11 +11,10 @@ namespace Entities.Models
 {
     public class MeterReading
     {
-
         public DateTime MeterReadingDateTime { get; set; }
 
-        public int MeterReadValue { get; set; }
-
+        [CsvColumnAttribute("MeterReadValue", @"(?:^|\D)(\d{5})(?!\d)")]
+        public string MeterReadValue { get; set; }
         public int AccountId { get; set; }
 
     }

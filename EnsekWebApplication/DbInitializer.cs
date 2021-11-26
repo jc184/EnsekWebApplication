@@ -5,6 +5,7 @@ using Entities.DTOs;
 using Entities.Models;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
+using System;
 using System.IO;
 using System.Linq;
 using System.Reflection;
@@ -71,7 +72,7 @@ namespace EnsekWebApplication
             _dbContext.SaveChanges();
         }
 
-        public async void AddMeterReadings()
+        public string AddMeterReadings()
         {
             Assembly assembly = Assembly.GetExecutingAssembly();
             string resourceName2 = "EnsekWebApplication.Resources.Uploads.Meter_Reading.csv";
@@ -88,7 +89,7 @@ namespace EnsekWebApplication
                     };
                     CsvReader csvReader = new CsvReader(reader, config);
                     var records = csvReader.GetRecords<MeterReading>().ToArray();
-
+                  
                     foreach (MeterReading record in records)
                     {
                         var entity = _dbContext.MeterReadings.Find(record.MeterReadingDateTime); //To Avoid tracking error
@@ -96,13 +97,21 @@ namespace EnsekWebApplication
                         if(entity != null)
                         {
                             _dbContext.Entry(entity).State = EntityState.Detached;
-                            _dbContext.MeterReadings.AddRange(record);
+                           
                         }
-                        _dbContext.MeterReadings.AddRange(record);
+                        if (record.MeterReadValue != null 
+                            && !String.IsNullOrEmpty(record.MeterReadValue) 
+                            && record.MeterReadValue.All(char.IsDigit)
+                            && record.MeterReadValue.Length.Equals(5))
+                        {
+                            _dbContext.MeterReadings.Add(record);
+                        }
+
                     }
                 }
             }
             _dbContext.SaveChanges();
+            return _dbContext.MeterReadings.Count().ToString();
         }
     }
 }
