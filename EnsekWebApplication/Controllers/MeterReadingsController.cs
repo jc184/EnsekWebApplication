@@ -61,7 +61,8 @@ namespace EnsekWebApplication.Controllers
                         file.CopyTo(stream);
                     }
                     int count = _dbInitializer.AddMeterReadings();
-                    return Ok(new { Message = "No of successful meter readings:" + " " + count + ", No of unsuccessful meter readings:" + " " + (35 - count) + "", });
+                    int rowcount = _dbInitializer.GetMeterReadingsCount();
+                    return Ok(new { Message = "No of successful meter readings:" + " " + count + ", No of unsuccessful meter readings:" + " " + (rowcount - count) + "", });
                 }
                 else
                 {
@@ -138,7 +139,7 @@ namespace EnsekWebApplication.Controllers
         /// Deletes a MeterReading
         /// </summary>
         /// <response code="204">MeterReading deleted</response>
-        [HttpDelete("{id}")]
+        [HttpDelete("{meterReadingDateTime}")]
         public async Task<IActionResult> DeleteMeterReading(DateTime meterReadingDateTime)
         {
             try
@@ -165,7 +166,7 @@ namespace EnsekWebApplication.Controllers
         /// </summary>
         /// <response code="200">MeterReading updated</response>
         /// <response code="400">Bad Request</response>
-        [HttpPut("{id}")]
+        [HttpPut("{meterReadingDateTime}")]
         public async Task<IActionResult> UpdateMeterReading(DateTime meterReadingDateTime, [FromBody] MeterReadingsForUpdateDTO meterReading)
         {
             try

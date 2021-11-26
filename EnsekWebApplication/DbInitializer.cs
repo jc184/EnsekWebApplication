@@ -17,6 +17,7 @@ namespace EnsekWebApplication
     {
         private readonly IServiceScopeFactory _scopeFactory;
         private readonly EnsekDbContext _dbContext;
+        private int records;
 
         public DbInitializer(IServiceScopeFactory scopeFactory, EnsekDbContext ensekDbContext)
         {
@@ -112,6 +113,30 @@ namespace EnsekWebApplication
             _dbContext.SaveChanges();
             return _dbContext.MeterReadings.Count();
             
+        }
+
+        public int GetMeterReadingsCount()
+        {
+            MeterReading[] records = null;
+            Assembly assembly = Assembly.GetExecutingAssembly();
+            string resourceName2 = "EnsekWebApplication.Resources.Uploads.Meter_Reading.csv";
+            using (Stream stream = assembly.GetManifestResourceStream(resourceName2))
+            {
+                using (StreamReader reader = new StreamReader(stream, Encoding.UTF8))
+                {
+                    CsvConfiguration config = new(System.Globalization.CultureInfo.CreateSpecificCulture("en-GB"))
+                    {
+                        HasHeaderRecord = true,
+                        HeaderValidated = null,
+                        MissingFieldFound = null,
+                        IgnoreBlankLines = false
+                    };
+                    CsvReader csvReader = new CsvReader(reader, config);
+                    records = csvReader.GetRecords<MeterReading>().ToArray();
+                }
+            }
+            return records.Length;
+
         }
     }
 }
