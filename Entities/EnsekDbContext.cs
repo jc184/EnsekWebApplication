@@ -10,6 +10,10 @@ namespace Entities
 {
     public class EnsekDbContext : DbContext
     {
+        public EnsekDbContext()
+        {
+
+        }
         public EnsekDbContext(DbContextOptions<EnsekDbContext> options) : base(options)
         {
             ChangeTracker.QueryTrackingBehavior = QueryTrackingBehavior.NoTracking;

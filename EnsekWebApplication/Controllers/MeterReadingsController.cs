@@ -116,14 +116,9 @@ namespace EnsekWebApplication.Controllers
         /// </summary>
         /// <response code="201">MeterReading added</response>
         /// <response code="400">Bad Request</response>
-        [HttpPost]
-        public async Task<IActionResult> CreateMeterReading(DateTime meterReadingDateTime, [FromBody] MeterReadingsForCreationDTO comment)
+        [HttpPost(Name = "CreateMeterReading")]
+        public async Task<IActionResult> CreateMeterReading([FromBody] MeterReadingsForCreationDTO meterReading)
         {
-            var meterReading = await _repository.MeterReadings.GetMeterReadingByIdAsync(meterReadingDateTime, trackChanges: false);
-            if (meterReading == null)
-            {
-                return NotFound();
-            }
 
             var meterReadingEntity = _mapper.Map<MeterReading>(meterReading);
 
@@ -132,8 +127,9 @@ namespace EnsekWebApplication.Controllers
 
             var meterReadingToReturn = _mapper.Map<MeterReadingDTO>(meterReadingEntity);
 
-            return CreatedAtRoute("MeterReadingById", new { meterReadingDateTime, id = meterReadingToReturn.MeterReadingDateTime }, meterReadingToReturn);
+            return CreatedAtRoute(new { id = meterReadingToReturn.MeterReadingDateTime }, meterReadingToReturn);
         }
+
 
         /// <summary>
         /// Deletes a MeterReading
