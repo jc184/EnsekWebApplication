@@ -62,7 +62,7 @@ namespace EnsekWebApplication.Controllers
                     }
                     int count = _dbInitializer.AddMeterReadings();
                     int rowcount = _dbInitializer.GetMeterReadingsCount();
-                    return Ok(new { Message = "No of successful meter readings:" + " " + count + ", No of unsuccessful meter readings:" + " " + (rowcount - count) + "", });
+                    return Ok(new { Message = "No of successful meter readings:" + " " + count + ", No of unsuccessful meter readings:" + " " + (rowcount - count) + ""});
                 }
                 else
                 {
@@ -127,7 +127,7 @@ namespace EnsekWebApplication.Controllers
 
             var meterReadingEntity = _mapper.Map<MeterReading>(meterReading);
 
-            _repository.MeterReadings.CreateMeterReading(meterReadingDateTime, meterReadingEntity);
+            _repository.MeterReadings.CreateMeterReading(meterReadingEntity);
             await _repository.SaveAsync();
 
             var meterReadingToReturn = _mapper.Map<MeterReadingDTO>(meterReadingEntity);

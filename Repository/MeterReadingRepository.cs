@@ -16,9 +16,8 @@ namespace Repository
         {
         }
 
-        public void CreateMeterReading(DateTime meterReadingDateTime, MeterReading meterReading)
+        public void CreateMeterReading(MeterReading meterReading)
         {
-            meterReading.MeterReadingDateTime = meterReadingDateTime;
             Create(meterReading);
         }
 
@@ -27,7 +26,7 @@ namespace Repository
             Delete(meterReading);
         }
 
-        public async Task<IEnumerable<MeterReading>> GetAllMeterReadingsAsync(bool trackChanges) =>
+        public async Task<List<MeterReading>> GetAllMeterReadingsAsync(bool trackChanges) =>
             await FindAll(trackChanges)
                 .OrderBy(mr => mr.AccountId)
                 .ToListAsync();

@@ -26,7 +26,7 @@ namespace Repository
             Delete(account);
         }
 
-        public async Task<IEnumerable<Account>> GetAllAccountsAsync(bool trackChanges) =>
+        public async Task<List<Account>> GetAllAccountsAsync(bool trackChanges) =>
                await FindAll(trackChanges)
                 .OrderBy(c => c.AccountId)
                 .ToListAsync();
