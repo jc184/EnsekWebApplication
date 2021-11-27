@@ -195,6 +195,5 @@ namespace EnsekWebApplication.Controllers
                 return StatusCode(500, "Internal server error");
             }
         }
-
     }
 }

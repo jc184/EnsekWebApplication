@@ -17,7 +17,6 @@ namespace EnsekWebApplication
     {
         private readonly IServiceScopeFactory _scopeFactory;
         private readonly EnsekDbContext _dbContext;
-        private int records;
 
         public DbInitializer(IServiceScopeFactory scopeFactory, EnsekDbContext ensekDbContext)
         {
